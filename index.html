@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابات </title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; }
+
+        .input-box { margin-bottom: 15px; }
+        label { display: block; font-size: 0.9rem; margin-bottom: 5px; color: #64748b; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        .divider { height: 2px; background: #f1f5f9; margin: 25px 0; position: relative; }
+        .divider::after { content: "النتائج التفصيلية"; position: absolute; top: -10px; right: 20px; background: white; padding: 0 10px; font-size: 0.8rem; color: #94a3b8; }
+
+        .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f8fafc; }
+        .row:last-child { border: none; }
+        .val { font-weight: 700; }
+        
+        .highlight-box {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 15px;
+            text-align: center;
+            border: 1px solid #e0e7ff;
+        }
+        .highlight-box span { display: block; font-size: 0.9rem; color: var(--primary); }
+        .highlight-box strong { font-size: 1.8rem; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>الحسابات   🚀</h2>
+    
+    <div class="input-box">
+        <label>إجمالي الإيرادات</label>
+        <input type="number" id="rev" value="0" oninput="calc()">
+    </div>
+
+    <div class="input-box">
+        <label>إجمالي المصروفات</label>
+        <input type="number" id="exp" value="0" oninput="calc()">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+        <span>صافي الربح الإجمالي:</span>
+        <span class="val" id="gross">0</span>
+    </div>
+    <div class="row">
+        <span>خصم (10%):</span>
+        <span class="val" style="color: var(--danger)" id="tax">0</span>
+    </div>
+    <div class="row">
+        <span>رسوم فودافون كاش (1%):</span>
+        <span class="val" style="color: var(--accent)" id="vodafone">0</span>
+    </div>
+    <div class="row">
+        <span>الصافي النهائي للتوزيع:</span>
+        <span class="val" style="color: var(--success)" id="net">0</span>
+    </div>
+
+    <div class="highlight-box">
+        <span>نصيب كل فرد (3 شركاء)</span>
+        <strong id="perPerson">0</strong>
+    </div>
+</div>
+
+<script>
+    function calc() {
+        const rev = parseFloat(document.getElementById('rev').value) || 0;
+        const exp = parseFloat(document.getElementById('exp').value) || 0;
+
+        // 1. حساب صافي الربح الأولي
+        const gross = rev - exp;
+        
+        // 2. خصم الـ 10%
+        const tax = gross * 0.10;
+        const afterTax = gross - tax;
+
+        // 3. حساب مصاريف سحب فودافون (10 ج لكل 1000 تعادل 1%)
+        const vCash = afterTax * 0.01;
+
+        // 4. الصافي النهائي
+        const finalNet = afterTax - vCash;
+        const share = finalNet / 3;
+
+        // التحديث في الصفحة
+        document.getElementById('gross').innerText = gross.toLocaleString() + " ج.م";
+        document.getElementById('tax').innerText = tax.toLocaleString() + " ج.م";
+        document.getElementById('vodafone').innerText = Math.ceil(vCash).toLocaleString() + " ج.م"; // جبر الكسور في الرسوم
+        document.getElementById('net').innerText = Math.floor(finalNet).toLocaleString() + " ج.م";
+        document.getElementById('perPerson').innerText = Math.floor(share).toLocaleString() + " ج.م";
+    }
+
+    window.onload = calc;
+</script>
+
+</body>
+</html>
